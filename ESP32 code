@@ -1,0 +1,47 @@
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include "heltec.h"
+// Each group need to generate their own UUID for tracking service
+// See the following for generating UUIDs:
+// https://www.uuidgenerator.net/
+//#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+//#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define SERVICE_UUID "85ddc1b8-c75c-11ed-afa1-0242ac120002"
+#define CHARACTERISTIC_UUID "85ddc4c4-c75c-11ed-afa1-0242ac120002"
+void setup() {
+Serial.begin(115200);
+Serial.println("Starting BLE work!");
+// Display your group name on your screen
+Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Enable*/, true /*Serial Enable*/);
+// Clear the OLED screen
+Heltec.display->clear();
+// Prepare to display your group name
+Heltec.display->drawString(0, 0, "group 6");
+// Display the readings
+Heltec.display->display();
+// Each groups need to spacify their name starting with their group number
+BLEDevice::init("6group");
+BLEServer *pServer = BLEDevice::createServer();
+BLEService *pService = pServer->createService(SERVICE_UUID);
+BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+CHARACTERISTIC_UUID,
+BLECharacteristic::PROPERTY_READ |
+BLECharacteristic::PROPERTY_WRITE
+);
+pCharacteristic->setValue("6group");
+pService->start();
+BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+pAdvertising->addServiceUUID(SERVICE_UUID);
+pAdvertising->setScanResponse(true);
+pAdvertising->setMinPreferred(0x06); // functions that help with iPhone connections issue
+pAdvertising->setMinPreferred(0x12);
+BLEDevice::startAdvertising();
+Serial.println("Characteristic defined! Now you can read it in your phone!");
+}
+void loop() {
+// Put your main code here, to run repeatedly:
+BLEDevice::startAdvertising();
+Serial.println("Characteristic defined! Now you can read it in your phone!");
+delay(2000);
+}
