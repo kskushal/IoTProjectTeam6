@@ -1,1 +1,1 @@
-Study on how RSSI-Distance Correlation can expedite the Disaster Recovery Process.
+STUDY ON HOW RSSI-DISTANCE CORRELATION CAN EXPEDITE THE DISASTER RECOVERY PROCESS.
